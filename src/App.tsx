@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { lexer, parser } from "./lib";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState(
+    '[{ "name": "John Doe", "age": 30, "pac":-2.32e-12, "cars": { "car1": "Ford", "car2": "BMW", "car3": "Fiat" }, "isMarried": true, "spouse": null, "children": [ "Ann", "Billy" ], "pets": [ { "animal": "dog", "name": "Fido" }, { "animal": "cat", "name": "Felix" } ] }]',
+  );
+
+  const handleParse = () => {
+    try {
+      console.time("parse");
+      lexer.setData(data);
+      const tokens = lexer.getTokens();
+      console.log("tokens", tokens);
+      parser.setTokens(tokens);
+      const astParse = parser.parse();
+      console.log("astParse", astParse);
+      console.timeEnd("parse");
+      console.time("parse time");
+      console.log(JSON.parse(data));
+      console.timeEnd("parse time");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <textarea
+          rows={10}
+          cols={80}
+          value={data}
+          onChange={(e) => setData(e.target.value)}
+        />
+        <button onClick={() => handleParse()}>Parse</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
