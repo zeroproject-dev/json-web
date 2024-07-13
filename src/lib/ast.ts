@@ -209,7 +209,13 @@ export function Json(jsonString: string) {
       const value = parseValue(valToken);
       pairs.push({ type: NodeType.PAIR, key, value });
       token = getNextToken();
-      if (token?.type === TokenType.COMMA) token = getNextToken();
+      if (token?.type === TokenType.COMMA) {
+        token = getNextToken();
+        if (token?.type === TokenType.BRACKET_CLOSE)
+          throw new Error(getErrorMessage(token));
+      } else if (token?.type !== TokenType.BRACKET_CLOSE) {
+        throw new Error(getErrorMessage(token));
+      }
     }
 
     return { type: NodeType.OBJECT, pairs };
@@ -221,7 +227,13 @@ export function Json(jsonString: string) {
     while (token?.type !== TokenType.SQUARE_BRACKET_CLOSE && token) {
       elements.push(parseValue(token));
       token = getNextToken();
-      if (token?.type === TokenType.COMMA) token = getNextToken();
+      if (token?.type === TokenType.COMMA) {
+        token = getNextToken();
+        if (token?.type === TokenType.SQUARE_BRACKET_CLOSE)
+          throw new Error(getErrorMessage(token));
+      } else if (token?.type !== TokenType.SQUARE_BRACKET_CLOSE) {
+        throw new Error(getErrorMessage(token));
+      }
     }
     return { type: NodeType.ARRAY, elements };
   };
