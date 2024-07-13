@@ -67,3 +67,50 @@ test("Should throw error missing closing bracket in array", () => {
   const json = "[1, 2, 3";
   expect(() => Json(json) === undefined).toThrowError("Unexpected");
 });
+
+// Test numbers
+
+test("Simple number", () => {
+  const json = "123";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: 123 });
+});
+
+test("Simple negative number", () => {
+  const json = "-123";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: -123 });
+});
+
+test("Simple float", () => {
+  const json = "123.45";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: 123.45 });
+});
+
+test("Simple negative float", () => {
+  const json = "-123.45";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: -123.45 });
+});
+
+test("Exponential notation", () => {
+  const json = "1.23e4";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: 12300 });
+});
+
+test("Negative exponential notation", () => {
+  const json = "-1.23e4";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: -12300 });
+});
+
+test("Exponential notation with negative exponent", () => {
+  const json = "1.23e-4";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: 0.000123 });
+});
+
+test("Negative exponential notation with negative exponent", () => {
+  const json = "-123e-4";
+  expect(Json(json)).toEqual({ type: NodeType.NUMBER, value: -0.0123 });
+});
+
+test("Should throw error invalid number", () => {
+  const json = "123.45.67";
+  expect(() => Json(json) === undefined).toThrowError("Unexpected");
+});

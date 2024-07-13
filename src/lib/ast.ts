@@ -1,4 +1,4 @@
-import { keywords } from "./keywords";
+import { keywords, unaryTokens } from "./keywords";
 import { Token, TokenType } from "./token";
 
 export enum NodeType {
@@ -61,37 +61,20 @@ export function Json(jsonString: string) {
   const data = jsonString;
 
   const advance = () => (start = ++current);
+  const consumeNumber = () => {
+    while (data[current] >= "0" && data[current] <= "9") current++;
+  };
 
   const getNextToken = (): Token | null => {
     while (current < data.length) {
       const c = data[start];
       let type: TokenType;
       switch (c) {
-        case "{":
-          type = TokenType.BRACKET_OPEN;
-          break;
-        case "}":
-          type = TokenType.BRACKET_CLOSE;
-          break;
-        case "[":
-          type = TokenType.SQUARE_BRACKET_OPEN;
-          break;
-        case "]":
-          type = TokenType.SQUARE_BRACKET_CLOSE;
-          break;
-        case ":":
-          type = TokenType.COLON;
-          break;
-        case ",":
-          type = TokenType.COMMA;
-          break;
         case " ":
         case "\t":
         case "\r":
-          advance();
-          continue;
         case "\n":
-          line++;
+          if (c === "\n") line++;
           advance();
           continue;
         case '"': {
@@ -115,19 +98,39 @@ export function Json(jsonString: string) {
           return token;
         }
         default:
-          if ((c >= "0" && c <= "9") || c === "-") {
+          if (unaryTokens[c]) {
+            type = unaryTokens[c];
+            break;
+          } else if ((c >= "0" && c <= "9") || c === "-") {
             if (c === "-") current++;
-            while (data[current] >= "0" && data[current] <= "9") current++;
+            consumeNumber();
 
             if (data[current] === ".") {
               current++;
-              while (data[current] >= "0" && data[current] <= "9") current++;
-
+              consumeNumber();
               if (data[current] === "e" || data[current] === "E") {
                 current++;
                 if (data[current] === "+" || data[current] === "-") current++;
-                while (data[current] >= "0" && data[current] <= "9") current++;
+                consumeNumber();
               }
+            } else if (data[current] === "e" || data[current] === "E") {
+              current++;
+              if (data[current] === "+" || data[current] === "-") current++;
+              consumeNumber();
+            }
+
+            if (
+              data[current] !== "\n" &&
+              data[current] !== "" &&
+              data[current] !== undefined &&
+              data[current] !== " " &&
+              data[current] !== "," &&
+              data[current] !== "}" &&
+              data[current] !== "]"
+            ) {
+              throw new Error(
+                `Unexpected character ${data[current]} at line ${line}; index ${current}`,
+              );
             }
 
             const value = data.substring(start, current);
@@ -241,8 +244,5 @@ export function Json(jsonString: string) {
   const firstToken = getNextToken();
   if (!firstToken) throw new Error("Empty Json");
 
-  if (firstToken.type === TokenType.SQUARE_BRACKET_OPEN) return parseArray();
-  if (firstToken.type === TokenType.BRACKET_OPEN) return parseObject();
-
-  throw new Error(getErrorMessage(firstToken));
+  return parseValue(firstToken);
 }
