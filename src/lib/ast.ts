@@ -54,7 +54,7 @@ function getErrorMessage(token: Token | null): string {
   return `Unexpected token ${token?.lexeme} at line: ${token?.line} at column ${Math.floor((token?.index ?? 1) / (token?.line ?? 1) + 1)}, index ${token?.index}`;
 }
 
-export function Json(jsonString: string) {
+export function JsonAST(jsonString: string) {
   let start = 0;
   let current = 0;
   let line = 1;

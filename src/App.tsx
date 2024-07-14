@@ -1,40 +1,18 @@
 import { useState } from "react";
 import "./App.css";
-import { Json } from "./lib";
+import { MainPage } from "./pages";
 
 function App() {
-  const [data, setData] = useState(
-    '[{ "name": "John Doe", "age": 30, "pac":-2.32e-12, "cars": { "car1": "Ford", "car2": "BMW", "car3": "Fiat" }, "isMarried": true, "spouse": null, "children": [ "Ann", "Billy" ], "pets": [ { "animal": "dog", "name": "Fido" }, { "animal": "cat", "name": "Felix" } ] }, {}, [], "true", false, null, 0]',
-  );
-
-  const [result, setResult] = useState({});
-
-  const handleParse = () => {
-    try {
-      setResult(Json(data));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <>
-      <div>
-        <textarea
-          rows={10}
-          cols={80}
-          value={data}
-          onChange={(e) => setData(e.target.value)}
-        />
-        <button onClick={() => handleParse()}>Parse</button>
-        <textarea
-          rows={10}
-          cols={80}
-          value={JSON.stringify(result, null, 2)}
-          onChange={(e) => setData(e.target.value)}
-        />
+    <main
+      className={`${darkMode ? "dark" : ""} absolute top-0 left-0 w-dvw h-dvh`}
+    >
+      <div className="dark:bg-gray-800 absolute top-0 left-0 w-dvw h-dvh px-6">
+        <MainPage darkMode={darkMode} setDarkMode={setDarkMode} />
       </div>
-    </>
+    </main>
   );
 }
 
