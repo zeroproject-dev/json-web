@@ -1,0 +1,16 @@
+services:
+  app:
+    container_name: json-web
+    image: json-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    expose:
+      - 80
+    networks:
+      - nginx_proxy_default
+
+networks:
+  nginx_proxy_default:
+    external: true

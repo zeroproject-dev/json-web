@@ -1,18 +1,19 @@
-import path from "path";
-
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+
+import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@icons": path.resolve(__dirname, "./src/shared/icons"),
-      "@shared": path.resolve(__dirname, "./src/shared"),
-      "@lib": path.resolve(__dirname, "./src/lib"),
-      "@pages": path.resolve(__dirname, "./src/pages"),
+      "@": resolve("./src"),
+      "@icons": resolve("./src/shared/icons"),
+      "@shared": resolve("./src/shared"),
+      "@lib": resolve("./src/lib"),
+      "@pages": resolve("./src/pages"),
     },
   },
   test: {
