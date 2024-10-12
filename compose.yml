@@ -9,8 +9,8 @@ services:
     expose:
       - 80
     networks:
-      - nginx_proxy_default
+      - proxy
 
 networks:
-  nginx_proxy_default:
+  proxy:
     external: true
