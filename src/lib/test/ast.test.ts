@@ -114,3 +114,31 @@ test("Should throw error invalid number", () => {
   const json = "123.45.67";
   expect(() => JsonAST(json) === undefined).toThrowError("Unexpected");
 });
+
+test("Can scape \\\\", () => {
+  const json = '{"b": "\\"}';
+  expect(JsonAST(json)).toEqual({
+    type: NodeType.OBJECT,
+    pairs: [
+      {
+        type: NodeType.PAIR,
+        key: { type: NodeType.STRING, value: "b" },
+        value: { type: NodeType.STRING, value: "\\" },
+      },
+    ],
+  });
+});
+
+test("Can scape \\/", () => {
+  const json = '{"b": "\\/"}';
+  expect(JsonAST(json)).toEqual({
+    type: NodeType.OBJECT,
+    pairs: [
+      {
+        type: NodeType.PAIR,
+        key: { type: NodeType.STRING, value: "b" },
+        value: { type: NodeType.STRING, value: "/" },
+      },
+    ],
+  });
+});

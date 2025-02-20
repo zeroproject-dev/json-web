@@ -13,10 +13,7 @@ interface MainPageProps {
 export function MainPage(props: MainPageProps) {
   const { darkMode, setDarkMode } = props;
 
-  const [data, setData] = useState(
-    // '[{ "name": "John Doe", "age": 30, "pac":-2.32e-12, "cars": { "car1": "Ford", "car2": "BMW", "car3": "Fiat" }, "isMarried": true, "spouse": null, "children": [ "Ann", "Billy" ], "pets": [ { "animal": "dog", "name": "Fido" }, { "animal": "cat", "name": "Felix" } ] }, {}, [], "true", false, null, 0]',
-    "",
-  );
+  const [data, setData] = useState("");
   const [result, setResult] = useState("");
 
   const handleParse = (newData?: string) => {

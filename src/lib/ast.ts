@@ -64,6 +64,26 @@ export function JsonAST(jsonString: string) {
   const consumeNumber = () => {
     while (data[current] >= "0" && data[current] <= "9") current++;
   };
+  const canScapeChar = () => {
+    const next = data[current + 1];
+    switch (next) {
+      case '"':
+      case "\\":
+      case "b":
+      case "f":
+      case "r":
+      case "t":
+        return true;
+      case "u": {
+        const res =
+          data.slice(current + 2, current + 6).match(/[\da-f]{4}/i) !== null;
+        current += 4;
+        return res;
+      }
+      default:
+        return false;
+    }
+  };
 
   const getNextToken = (): Token | null => {
     while (current < data.length) {
@@ -79,10 +99,15 @@ export function JsonAST(jsonString: string) {
           continue;
         case '"': {
           advance();
+          let value = "";
+          let withOutBackslash = start;
           while (data[current] !== '"' && current < data.length) {
             if (data[current] === "\n") line++;
-            else if (data[current] === "\\" && data[current + 1] === '"')
-              current++;
+            else if (data[current] === "\\" && canScapeChar()) current++;
+            else if (data[current] === "\\" && data[current + 1] === "/") {
+              value = data.substring(withOutBackslash, current);
+              withOutBackslash = current + 1;
+            }
             current++;
           }
 
@@ -92,7 +117,7 @@ export function JsonAST(jsonString: string) {
             );
           }
 
-          const value = data.substring(start, current);
+          value += data.substring(withOutBackslash, current);
           const token = new Token(TokenType.STRING, value, start - 1, line);
           start = ++current;
           return token;
