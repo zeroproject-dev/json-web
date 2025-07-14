@@ -18,4 +18,4 @@ jobs:
           host: ${{ secrets.HOST }}
           user: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          command: ~/front-project-deploy.sh json-web
+          command: ~/front-project-deploy.sh json-web json-formatter

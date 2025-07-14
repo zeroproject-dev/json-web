@@ -15,4 +15,5 @@ CMD ["nginx", "-g", "daemon off;"]
 # artifact stage for deployment
 
 FROM scratch AS artifact
-COPY --from=build /app/dist /json-formatter
+ARG APP_NAME=json-web
+COPY --from=build /app/dist /${APP_NAME}
